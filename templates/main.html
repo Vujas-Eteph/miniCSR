@@ -1,0 +1,27 @@
+<!-- templates/main.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSA</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #222; color: #fff; }
+        h1, h3 { color: #fff; }
+        pre { background: #000; padding: 20px; border: 1px solid #ddd; color: #fff; }
+    </style>
+</head>
+<body>
+    <h1> Check Server Availability: </h1>
+    <h3>- GPU/CPU Usage and Active Users</h3>
+    <pre>{{ result }}</pre>
+    <h3>- Detailed GPU Information</h3>
+    <pre>{{ result_detailed }}</pre>
+    <h3>- Disk Space Information</h3>
+    <pre>{{ result_detailed_space }}</pre>
+    <script>
+        setTimeout(() => { window.location.reload(); }, 4000);
+    </script>
+</body>
+</html>

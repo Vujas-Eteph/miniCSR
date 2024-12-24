@@ -1,0 +1,1 @@
+GPU_SERVER_ALIASES: ['serv A', 'serv B', 'serv C']  # Be sure to use the server names inside your .ssh/config
