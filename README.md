@@ -20,7 +20,7 @@ mamba env create -f environment.yml  # You can also use conda instead of mamba (
 > [!NOTE]  
 > We don't need to install anything on the servers that we are going to monitor, since we only rely on basic linux commands that should already be available natively.
 
-### Configuration of the servers to acess with miniCSR 
+### Configuration of the servers to access with miniCSR 
 When setting up ssh connections, natively linux will save it in .ssh/config, which you can modify like below
 ```yaml
 # .ssh/config template
