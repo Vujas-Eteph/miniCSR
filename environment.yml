@@ -9,7 +9,7 @@ dependencies:
   - tabulate=0.9.0
   - pyyaml=6.0.2
   - paramiko=3.5.0
+  - flask=2.3.3
   - pip
   - pip:
-    - gunicorn=23.0.0
-    - Flask=3.1.0
+    - gunicorn==23.0.0
