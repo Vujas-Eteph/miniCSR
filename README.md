@@ -44,14 +44,6 @@ Afterwards, add the **SERVER_ALIAS** of the servers you want to monitor inside *
 > [!NOTE]
 > By default, the webpage is on your **local port 1990**. You can change that in the configurations.
 
-- When debugging:
-    ```bash
-    mamba activate miniCSR
-    python3 monitoring.py -r RRRR(sec) -s SSSS(sec)  # start the monitoring script in one terminal
-    gunicorn -w 4 -b 0.0.0.0:1990 app:app  # start the Gunicorn server in another terminal
-    ```
-
-
 > [!WARNING] 
 > This project has been tested on an Ubuntu distributions and uses Python 3. We mostly rely on basic linux commands to get the internal state of the servers and process it with Python. 
 
