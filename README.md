@@ -15,7 +15,7 @@ TODO
 Run the following on your local machine that is doing the monitoring:  
 ```bash
 git clone https://github.com/Vujas-Eteph/miniCSR
-mamba env create -f environment.yml  # [TODO: Add the correct environment file name] # You can also use conda instead of mamba
+mamba env create -f environment.yml  # You can also use conda instead of mamba (or update the environement instead)
 ```
 > [!NOTE]  
 > We don't need to install anything on the servers that we are going to monitor, since we only rely on basic linux commands that should already be available natively.
