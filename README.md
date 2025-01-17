@@ -67,8 +67,3 @@ So to **save time**, I wanted a centralized monitoring tool that consolidates th
 The project is planned to be expanded to include additional features, such as:
 - A calendar for optimizing resource usage and scheduling.
 - Advanced visualization tools to monitor trends over time.
-
-## Future Features
-- [ ] Add graphs or curves to visualize the server load over time.
-- [ ] Add a calendar section for you and your coworkers to reserve "training slots".
-- [ ] Add a license to restrict commercial use of the project.
