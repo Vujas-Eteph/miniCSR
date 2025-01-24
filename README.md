@@ -27,7 +27,7 @@ mamba env create -f environment.yml  # You can also use conda instead of mamba (
         Port XX             # Replace with the actual port number
         UserKnownHostsFile ~/.ssh/known_hosts
     ```
-- Step 2: Add the **SERVER_ALIAS** entries for the servers you want to monitor in the [**server_names.yaml**](./config/server_names.yaml) file. You can refer to this [example configuration](./config/example_server_names.yaml) for guidance on setting it up your **server_names.yaml**. Using this allows you to only monitor servers you are interested in, and not every server you have ssh access to.
+- Step 2: Add the **SERVER_ALIAS** entries for the servers you want to monitor in the [**server_names.yaml**](./config/server_names.yaml) file. You can refer to this [example configuration](./config/example_server_names.yaml) for guidance on setting it up your [**server_names.yaml**](./config/server_names.yaml). Using this allows you to only monitor servers you are interested in, and not every server you have ssh access to.
 
 ### Running miniCSR
 
