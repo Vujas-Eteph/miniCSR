@@ -1,13 +1,9 @@
 # Check Server Resources (CSR) - Minimalist Version
 
-*A minimalist and private webpage to monitor resources on local "GPU servers". Only YOU and the people in your network can access the webpage displaying your server resources.*
+*In a computer science lab or tech company, managing multiple servers and GPUs for deep learning experiments can be challenging. miniCSR provides a minimalist and private webpage to monitor the resources of local 'GPU servers.' Only you and authorized users within your network can access this webpage, offering a secure way to view detailed statistics of your GPU, CPU, and disk space resources for each server—all in one place.*
 
-*What do I get from miniCSR?*  
-Statistics of your GPU, CPU and disk space ressources for each server in one place. Here is how it looks like (Anonymized Screen Shoot):
+Here's an anonymized screenshot of how it looks:
 ![CSR_output_anonymized](./assets/Anonymized_CSR_output.png)
-
-*How does it actually work?*  
-TODO
 
 ## Setting up miniCSR
 
@@ -50,12 +46,5 @@ Afterwards, add the **SERVER_ALIAS** of the servers you want to monitor inside *
 ---
 
 ## Motivation for the project
-
-### The Origin Story  
 Before CSR, I had to manually check if a server was available by SSHing into each server one by one. This process became cumbersome already at the second attempt.  
 So to **save time**, I wanted a centralized monitoring tool that consolidates this task, making it quick and efficient. Hence, this project.  
-
-### Long-Term Vision  
-The project is planned to be expanded to include additional features, such as:
-- A calendar for optimizing resource usage and scheduling.
-- Advanced visualization tools to monitor trends over time.
