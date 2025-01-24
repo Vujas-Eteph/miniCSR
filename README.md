@@ -17,17 +17,17 @@ mamba env create -f environment.yml  # You can also use conda instead of mamba (
 > We don't need to install anything on the servers that we are going to monitor, since we only rely on basic linux commands that should already be available natively.
 
 ### Configuration of the servers to access with miniCSR 
-When setting up ssh connections, natively linux will save it in .ssh/config, which you can modify like below
-```yaml
-# .ssh/config template
-Host SERVER_ALIAS
-    HostName SERVER_IP  # Replace with actual server IP
-    User USER_NAME      # Replace with actual user name
-    IdentityFile ~/.ssh/id_rsa
-    Port XX             # Replace with the actual port number
-    UserKnownHostsFile ~/.ssh/known_hosts
-```
-Afterwards, add the **SERVER_ALIAS** of the servers you want to monitor inside **server_names.yaml** like in this [example](./config/example_server_names.yaml). Hence, miniCSR is only accesssing those that you want to monitor and not all the servers you have ssh access too.
+- Step 1 (Optional): When setting up ssh connections, natively linux will save it in .ssh/config, which you can modify like below. However, you can skip this if you don't want to miggle with you current ssh configs.
+    ```yaml
+    # .ssh/config template
+    Host SERVER_ALIAS
+        HostName SERVER_IP  # Replace with actual server IP
+        User USER_NAME      # Replace with actual user name
+        IdentityFile ~/.ssh/id_rsa
+        Port XX             # Replace with the actual port number
+        UserKnownHostsFile ~/.ssh/known_hosts
+    ```
+- Step 2: Add the **SERVER_ALIAS** entries for the servers you want to monitor in the [**server_names.yaml**](./config/server_names.yaml) file. You can refer to this [example configuration](./config/example_server_names.yaml) for guidance on setting it up your **server_names.yaml**. Using this allows you to only monitor servers you are interested in, and not every server you have ssh access to.
 
 ### Running miniCSR
 
