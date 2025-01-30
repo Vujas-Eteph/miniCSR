@@ -171,14 +171,14 @@ def main():
         for GPU_server_alias in GPU_SERVER_ALIASES:
             host_manager.add_connection(GPU_server_alias)
             host_manager.connect_to_server(GPU_server_alias)
+        valid_GPU_SERVER = host_manager.check_current_servers_alive()
 
         # Create a barrier with the action function
-        barrier = threading.Barrier(len(GPU_SERVER_ALIASES), action=update_latest_results)
-
-        # Start monitoring threads
+        barrier = threading.Barrier(len(valid_GPU_SERVER), action=update_latest_results)
         threads = []
 
-        for GPU_server_alias in GPU_SERVER_ALIASES:
+        # Start monitoring threads
+        for GPU_server_alias in valid_GPU_SERVER:
             thread = threading.Thread(
                 target=thread_server_moni,
                 args=(START_TIME, HOURS_TO_RUN, cmd_manager, GPU_server_alias,

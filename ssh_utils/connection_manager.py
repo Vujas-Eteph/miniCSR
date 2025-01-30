@@ -17,7 +17,8 @@ class ConnectionManagerViaSSH:
         """Add server connection"""
         if server_alias not in self.connections:
             connection = ConnectionToHostViaSSH(server_alias, self.ssh_config)
-            self.connections[server_alias] = connection
+            if connection.check_connection():
+                self.connections[server_alias] = connection
         else:
             print(f"Connection for {server_alias} already exists.")
 
@@ -29,6 +30,10 @@ class ConnectionManagerViaSSH:
             self.connections[server_alias].connect(self.password)
         else:
             print(f"No connection found for {server_alias}.")
+            
+    def check_current_servers_alive(self):
+        """Return the server alias which have a valid ssh connection"""
+        return list(self.connections.keys())
 
     def get_connection(self, server_alias):
         """Get the SSH connection for a specific server"""

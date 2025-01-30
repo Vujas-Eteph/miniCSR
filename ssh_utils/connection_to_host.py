@@ -1,6 +1,7 @@
 # - IMPORTS -------------------------------------------------------------------
 import os
 import paramiko
+import socket
 
 
 # - CLASS ---------------------------------------------------------------------
@@ -14,12 +15,24 @@ class ConnectionToHostViaSSH:
         self.ssh_client.set_missing_host_key_policy(paramiko.WarningPolicy())
         self.ssh_client.load_host_keys(os.path.expanduser(self.known_hosts))
 
+    def check_connection(self, timeout=5):
+        """Check if the server is reachable before trying SSH"""
+        try:
+            with socket.create_connection((self.hostname, self.port), timeout):
+                print(f"Server {self.hostname} is reachable")
+                return True
+        except (socket.timeout, ConnectionRefusedError) as e:
+            print(f"Cannot reach {self.hostname}")
+            return False
+        except Exception as e:
+            print(f"Unexpected error checking {self.hostname}: {e}")
+            return False
+
     def connect(self, password):
         """Establish ssh connection with password"""
         try:
             self.ssh_client.connect(hostname=self.hostname, port=self.port,
                                     username=self.username, password=password)
-            print(f"Connected to {self.alias}")
         except paramiko.SSHException as e:
             print(f"Failed to connect to {self.alias}: {str(e)}.")
 
