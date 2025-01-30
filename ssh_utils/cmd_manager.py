@@ -5,6 +5,7 @@ from .cmd_to_host import ExecuteCmdOnHostViaSSH
 # - CLASS ---------------------------------------------------------------------
 class ManageCmdsToHosts:
     """Manage the commands to be run on MULTIPLE hosts"""
+
     def __init__(self, ssh_connection_manager):
         """
         Initialize with an SSHHostManager instance.
@@ -20,6 +21,8 @@ class ManageCmdsToHosts:
 
             return output, error
         else:
-            print(f"Cannot execute command. No active connection for {server_alias}.")
+            print(
+                f"Cannot execute command. No active connection for {server_alias}."
+            )
 
             return None, None

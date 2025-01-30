@@ -6,7 +6,14 @@ import pandas as pd
 class DiskSPaceWatcher:
     def __init__(self):
         self.df = None
-        self.header = ['Filesystem', 'Size', 'Used', 'Avail', 'Use%', 'Mounted']
+        self.header = [
+            "Filesystem",
+            "Size",
+            "Used",
+            "Avail",
+            "Use%",
+            "Mounted",
+        ]
 
     def parse_df_output(self, cmd_output):
         """Parse the cmd output into a DataFrame."""
@@ -18,11 +25,13 @@ class DiskSPaceWatcher:
     def clean_and_process_data(self):
         """Clean and process the DataFrame for numeric operations."""
         if self.df is None:
-            raise ValueError("No data to process. Run parse_df_output() first.")
+            raise ValueError(
+                "No data to process. Run parse_df_output() first."
+            )
 
         try:
-            self.df['Use%'] = self.df['Use%'].str.rstrip('%').astype(int)
-            self.relevant_df = self.df.loc[:, 'Size':'Use%'].astype(int)
+            self.df["Use%"] = self.df["Use%"].str.rstrip("%").astype(int)
+            self.relevant_df = self.df.loc[:, "Size":"Use%"].astype(int)
         except:
             pass
 
@@ -41,8 +50,7 @@ class DiskSPaceWatcher:
         gb_size = round(kb_size / (next_unit_by**2), 2)
         tb_size = round(kb_size / (next_unit_by**3), 2)
 
-        return {"KB": kb_size, "MB": mb_size,
-                "GB": gb_size, "TB": tb_size}
+        return {"KB": kb_size, "MB": mb_size, "GB": gb_size, "TB": tb_size}
 
     def get_disk_space_statistics(self, cmd_output):
         # print(cmd_output)
@@ -50,11 +58,13 @@ class DiskSPaceWatcher:
         self.clean_and_process_data()
         totals, averages = self.calculate_totals_and_averages()
         key = "TB"
-        condenced_info = {'dataframe': self.relevant_df,
-                          'Tot Size': self.convert_into_human_readable_form(totals[0])[key],
-                          'Tot Used': self.convert_into_human_readable_form(totals[1])[key],
-                          'Tot Avail': self.convert_into_human_readable_form(totals[2])[key],
-                          'Avg Use %': averages[-1]}
+        condenced_info = {
+            "dataframe": self.relevant_df,
+            "Tot Size": self.convert_into_human_readable_form(totals[0])[key],
+            "Tot Used": self.convert_into_human_readable_form(totals[1])[key],
+            "Tot Avail": self.convert_into_human_readable_form(totals[2])[key],
+            "Avg Use %": averages[-1],
+        }
 
         return condenced_info
 
@@ -89,6 +99,15 @@ if __name__ == "__main__":
     print(averages)
 
     # Convert totals to human-readable form
-    print("\nTotal Server Size (Human Readable):", extractor.convert_into_human_readable_form(totals['Size']))
-    print("Total Server Used Space (Human Readable):", extractor.convert_into_human_readable_form(totals['Used']))
-    print("Total Server Available Space (Human Readable):", extractor.convert_into_human_readable_form(totals['Avail']))
+    print(
+        "\nTotal Server Size (Human Readable):",
+        extractor.convert_into_human_readable_form(totals["Size"]),
+    )
+    print(
+        "Total Server Used Space (Human Readable):",
+        extractor.convert_into_human_readable_form(totals["Used"]),
+    )
+    print(
+        "Total Server Available Space (Human Readable):",
+        extractor.convert_into_human_readable_form(totals["Avail"]),
+    )

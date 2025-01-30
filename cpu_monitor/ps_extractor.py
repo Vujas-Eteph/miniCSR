@@ -4,13 +4,13 @@ import re
 
 
 # - CLASSES -------------------------------------------------------------------
-class CpuUsageByUserExtractor():
+class CpuUsageByUserExtractor:
     def __init__(self):
         self._init_regex_pattern()
 
     def _init_regex_pattern(self):
         # Define a regex pattern to extract user and CPU usage
-        self.pattern = re.compile(r'^(\S+)\s+(\d+\.\d+)$')
+        self.pattern = re.compile(r"^(\S+)\s+(\d+\.\d+)$")
 
     def get_cpu_usage_by_user(self, output):
         """Parses ps output and aggregates CPU usage by user."""
@@ -29,6 +29,8 @@ class CpuUsageByUserExtractor():
                     continue
 
                 # Aggregate CPU usage by user
-                cpu_usage_by_user[user] = cpu_usage_by_user.get(user, 0) + cpu_usage
+                cpu_usage_by_user[user] = (
+                    cpu_usage_by_user.get(user, 0) + cpu_usage
+                )
 
         return cpu_usage_by_user

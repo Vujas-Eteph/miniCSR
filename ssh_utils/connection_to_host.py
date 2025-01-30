@@ -9,8 +9,13 @@ class ConnectionToHostViaSSH:
     def __init__(self, server_alias, ssh_config):
         "Init. ssh connection with ONE server"
         self.alias = server_alias
-        self.hostname, self.username, self.port, self.id_rsa_key, \
-            self.known_hosts = ssh_config.get_host_config(self.alias)
+        (
+            self.hostname,
+            self.username,
+            self.port,
+            self.id_rsa_key,
+            self.known_hosts,
+        ) = ssh_config.get_host_config(self.alias)
         self.ssh_client = paramiko.SSHClient()
         self.ssh_client.set_missing_host_key_policy(paramiko.WarningPolicy())
         self.ssh_client.load_host_keys(os.path.expanduser(self.known_hosts))
@@ -31,8 +36,12 @@ class ConnectionToHostViaSSH:
     def connect(self, password):
         """Establish ssh connection with password"""
         try:
-            self.ssh_client.connect(hostname=self.hostname, port=self.port,
-                                    username=self.username, password=password)
+            self.ssh_client.connect(
+                hostname=self.hostname,
+                port=self.port,
+                username=self.username,
+                password=password,
+            )
         except paramiko.SSHException as e:
             print(f"Failed to connect to {self.alias}: {str(e)}.")
 

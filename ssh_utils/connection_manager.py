@@ -30,7 +30,7 @@ class ConnectionManagerViaSSH:
             self.connections[server_alias].connect(self.password)
         else:
             print(f"No connection found for {server_alias}.")
-            
+
     def check_current_servers_alive(self):
         """Return the server alias which have a valid ssh connection"""
         return list(self.connections.keys())

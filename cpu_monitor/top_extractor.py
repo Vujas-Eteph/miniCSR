@@ -4,7 +4,7 @@ import re
 
 
 # - CLASSES -------------------------------------------------------------------
-class TopExtractor():
+class TopExtractor:
     def __init__(self):
         self._init_regex_pattern()
 
@@ -12,7 +12,9 @@ class TopExtractor():
         # Define a regex pattern to extract user and CPU usage from the 'top' output.
         # This regex assumes the format of the 'top' output, where the user is in column 2
         # and CPU usage (as a percentage) is in column 9. Adjust if needed.
-        self.pattern = re.compile(r'^\s*(\S+)\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(\d+\.\d+)\s+')
+        self.pattern = re.compile(
+            r"^\s*(\S+)\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+(\d+\.\d+)\s+"
+        )
 
     def get_cpu_usage_by_user(self, output):
         """Parses top output and aggregates CPU usage by user."""
@@ -26,6 +28,6 @@ class TopExtractor():
             # Split the line into key (user) and value (CPU usage)
             key, value = line.split()
             # Store the key-value pair in the dictionary, converting value to float
-            cpu_usage_by_user[key] = float(value.replace(',', '.'))
+            cpu_usage_by_user[key] = float(value.replace(",", "."))
 
         return cpu_usage_by_user
