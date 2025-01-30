@@ -1,0 +1,4 @@
+# Example of usage: GPU_SERVER_ALIASES: ['serv A', 'serv B', 'serv C'] if you have server aliases "serv A", "serv B" and "serv C".
+
+# Be sure to use the server names inside your .ssh/config
+GPU_SERVER_ALIASES: []  # Only input servers you want to monitor and you access to
