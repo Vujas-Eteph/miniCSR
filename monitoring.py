@@ -96,8 +96,6 @@ def thread_server_moni(START_TIME, HOURS_TO_RUN, cmd_manager, GPU_server_alias,
                                                         disk_space_output=disk_space_stats)
 
         server_stats, detailled_server_stats, disk_stats_detailed = calculate_average_utilization(gpac_msg, GPU_server_alias)
-        
-        print(detailled_server_stats)
 
         with lock:
             shared_server_stats[GPU_server_alias] = \
