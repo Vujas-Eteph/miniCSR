@@ -48,17 +48,20 @@ def calculate_average_utilization(server_data, server_alias):
         "Active Users": list(cpu_info['normalized_cpu_load_wrt_user'].keys()),
         "Total CPU Load (%)": round((cpu_info.get('cpu_load').get('load_5min')
                                      / cpu_info.get('cpu_count')) * 100, 2),
-        "Avg Disk Space Used (%)": disk_space["Avg Use %"]
     }
     # Detailled GPU Statistics
     server_stats_detailed[server_alias] = {
         "GPU Memory (MiB)": server_data["gpus_list_gpu_mem_used"],
         "GPU Utilization (%)": server_data["gpus_list_gpu_gpu_util"],
+        "Temperature (C)": server_data["gpus_list_gpu_temperature"],
+        "GPU Fan (%)": server_data["gpus_list_gpu_fan_speed"],
+        "Power Usage (W)": server_data["gpus_list_gpu_power_used"]
     }
     # Disk Space Statistics
     disk_stats_detailed[server_alias] = {
-        "Total Disp Space Used (TB)": disk_space['Tot Used'],
-        "Total Disp Space Avail (TB)": disk_space['Tot Avail']
+        "Average Disk Space Used (%)": disk_space["Avg Use %"],
+        "Total Disk Space Used (TB)": disk_space['Tot Used'],
+        "Total Disk Space Avail (TB)": disk_space['Tot Avail']
     }
 
     return server_stats, server_stats_detailed, disk_stats_detailed
@@ -93,6 +96,8 @@ def thread_server_moni(START_TIME, HOURS_TO_RUN, cmd_manager, GPU_server_alias,
                                                         disk_space_output=disk_space_stats)
 
         server_stats, detailled_server_stats, disk_stats_detailed = calculate_average_utilization(gpac_msg, GPU_server_alias)
+        
+        print(detailled_server_stats)
 
         with lock:
             shared_server_stats[GPU_server_alias] = \

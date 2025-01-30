@@ -38,11 +38,22 @@ class ServerWatcher():
 
         if self.WATCH_GPU and gpu_output:
             server_stats["gpus"] = self._get_gpu_statistics(gpu_output)
+            # Primary GPU stats
             list_gpu_mem_used = [server['memory_used'] for server in server_stats["gpus"]]
             list_gpu_mem_tot = [server['memory_total'] for server in server_stats["gpus"]]
             list_gpu_util = [server['gpu_utilization'] for server in server_stats["gpus"]]
+            
+            # Secondary CPU stats
+            list_gpu_fan_speed = [server['fan_speed'] for server in server_stats["gpus"]]
+            list_gpu_temperature = [server['temperature'] for server in server_stats["gpus"]]
+            list_gpu_power_used = [server['power_used'] for server in server_stats["gpus"]]
+            
+            # Averaged GPU stats
             server_stats["gpus_list_gpu_mem_used"] = list_gpu_mem_used
             server_stats["gpus_list_gpu_gpu_util"] = list_gpu_util
+            server_stats["gpus_list_gpu_fan_speed"] = list_gpu_fan_speed
+            server_stats["gpus_list_gpu_temperature"] = list_gpu_temperature
+            server_stats["gpus_list_gpu_power_used"] = list_gpu_power_used
             server_stats["avg_gpu_mem_used"] = round(np.average(np.array(list_gpu_mem_used)/np.array(list_gpu_mem_tot))*100, 2)
             server_stats["avg_gpu_mem_util"] = round(np.average(np.array(list_gpu_util)), 2)
 
