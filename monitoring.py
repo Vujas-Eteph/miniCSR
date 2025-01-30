@@ -116,7 +116,7 @@ def thread_server_moni(
             gpu_output=host_output,
             cpu_output=cpu_stats,
             disk_space_output=disk_space_stats,
-        )bbb
+        )
 
         server_stats, detailled_server_stats, disk_stats_detailed = (
             calculate_average_utilization(gpac_msg, GPU_server_alias)
