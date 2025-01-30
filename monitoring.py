@@ -147,6 +147,7 @@ def main():
     args = arg_parser()
     HOURS_TO_RUN = args.run
     SLEEP = args.sleep
+    ANONYMIZE_FLAG = args.anonymize
     START_TIME = time.time()
 
     global latest_result, latest_result_detailed, latest_result_detailed_space
@@ -182,6 +183,23 @@ def main():
             df_disk_space_detailed = pd.DataFrame.from_dict(
                 shared_server_disk_detailed, orient="index"
             )
+
+            if (
+                ANONYMIZE_FLAG
+            ):  # This is mostly for showing the results on the github repo
+                for i, df in enumerate(
+                    [df_stats, df_stats_detailed, df_disk_space_detailed]
+                ):
+                    df = df.astype(str)
+                    df.iloc[:, :] = "XX.X"  # Replace all values
+
+                    # Assign back to the original variable
+                    if i == 0:
+                        df_stats = df
+                    elif i == 1:
+                        df_stats_detailed = df
+                    elif i == 2:
+                        df_disk_space_detailed = df
 
             # Sort the DataFrames by index (server names) alphabetically
             df_stats_sorted = df_stats.sort_index()

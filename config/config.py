@@ -26,6 +26,12 @@ def arg_parser():
         default=None,
         help="Password to connect to the servers",
     )
+    parser.add_argument(
+        "-a",
+        "--anonymize",
+        action='store_true',
+        help="Anonymize the results",
+    )
 
     # Parse the arguments
     return parser.parse_args()
