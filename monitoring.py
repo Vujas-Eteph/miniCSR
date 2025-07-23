@@ -33,19 +33,39 @@ def calculate_average_utilization(server_data, server_alias):
     """Compute some statistics"""
     # Create dicts
     server_stats = {}
-    server_stats_detailed = {}
+    gpu_stats_detailed = {}
+    cpu_stas_detailed = {}
     disk_stats_detailed = {}
 
     # Iterate over each server in the results
     # to extract GPU, CPU, and Disk Space details
     cpu_info = server_data["cpus"]
     disk_space = server_data["disk_space"]
+    cpu_util_distribution = cpu_info['cpu_util_distribution']
 
     # GPU and CPU Statistics
     server_stats[server_alias] = {
+        "Active Users": list(cpu_info["normalized_cpu_load_wrt_user"].keys()),
         "Avg. GPU Memory (%)": server_data["avg_gpu_mem_used"],
         "Avg. GPU Utilization (%)": server_data["avg_gpu_mem_util"],
-        "Active Users": list(cpu_info["normalized_cpu_load_wrt_user"].keys()),
+        "CPU Total Utilization (%)":  cpu_util_distribution['cpu_util'],
+    }
+
+    # Detailled GPU Statistics
+    gpu_stats_detailed[server_alias] = {
+        "GPU Memory (MiB)": server_data["gpus_list_gpu_mem_used"],
+        "GPU Utilization (%)": server_data["gpus_list_gpu_gpu_util"],
+        "Temperature (C)": server_data["gpus_list_gpu_temperature"],
+        "GPU Fan (%)": server_data["gpus_list_gpu_fan_speed"],
+        "Power Usage (W)": server_data["gpus_list_gpu_power_used"],
+    }
+
+    # Detailled GPU Statistics
+    cpu_stas_detailed[server_alias] = {
+        "User (%)":  cpu_util_distribution['us_cpu'],
+        "System (%)":  cpu_util_distribution['sy_cpu'],
+        "Idle (%)":  cpu_util_distribution['idle_cpu'],
+        "I/O Wait (%)":  cpu_util_distribution['wait_cpu'],
         "Total CPU Load (%)": round(
             (
                 cpu_info.get("cpu_load").get("load_5min")
@@ -55,14 +75,7 @@ def calculate_average_utilization(server_data, server_alias):
             2,
         ),
     }
-    # Detailled GPU Statistics
-    server_stats_detailed[server_alias] = {
-        "GPU Memory (MiB)": server_data["gpus_list_gpu_mem_used"],
-        "GPU Utilization (%)": server_data["gpus_list_gpu_gpu_util"],
-        "Temperature (C)": server_data["gpus_list_gpu_temperature"],
-        "GPU Fan (%)": server_data["gpus_list_gpu_fan_speed"],
-        "Power Usage (W)": server_data["gpus_list_gpu_power_used"],
-    }
+
     # Disk Space Statistics
     disk_stats_detailed[server_alias] = {
         "Average Disk Space Used (%)": disk_space["Avg Use %"],
@@ -70,7 +83,8 @@ def calculate_average_utilization(server_data, server_alias):
         "Total Disk Space Avail (TB)": disk_space["Tot Avail"],
     }
 
-    return server_stats, server_stats_detailed, disk_stats_detailed
+    return server_stats, gpu_stats_detailed, cpu_stas_detailed, \
+        disk_stats_detailed
 
 
 def thread_server_moni(
@@ -83,7 +97,8 @@ def thread_server_moni(
     lock,
     barrier,
     shared_server_stats,
-    shared_server_stats_detailed,
+    shared_gpu_stats_detailed,
+    shared_cpu_stats_detailed,
     shared_server_disk_detailed,
 ):
     """Monitor a GPU server with one Thread"""
@@ -101,10 +116,12 @@ def thread_server_moni(
                 "free",
                 "uptime",
                 "ps -eo user,pcpu",
-                "top -b -n 1 | awk 'NR>7 {cpu[$2]+=$9} END {for (u in cpu) print u, cpu[u]}'",
+                "top -b -n 1 | awk 'NR>7 {cpu[$2]+=$9} END {for (u in cpu) print u, cpu[u]}'",  # Count user calls to estimate the active users
                 "nproc",
+                """top -b -n 1 | grep '%Cpu(s)' | awk '{print "us", $2, "-", "sy", $4, "-", "id", $8, "-", "wa", $10}'""",  # Read the CPU utilisation
             ]
         ]
+
         disk_space_stats = [
             cmd_manager.execute_cmd_on_host(GPU_server_alias, cmd)[0]
             for cmd in ["df | grep -E '^/dev/' | grep -vE 'boot|tmpfs'"]
@@ -118,16 +135,20 @@ def thread_server_moni(
             disk_space_output=disk_space_stats,
         )
 
-        server_stats, detailled_server_stats, disk_stats_detailed = (
-            calculate_average_utilization(gpac_msg, GPU_server_alias)
-        )
+        server_stats, detailled_gpu_stats, detailled_cpu_stats, \
+            disk_stats_detailed = (calculate_average_utilization(gpac_msg,
+                                                                 GPU_server_alias)
+                                   )
 
         with lock:
             shared_server_stats[GPU_server_alias] = server_stats[
                 GPU_server_alias
             ]
-            shared_server_stats_detailed[GPU_server_alias] = (
-                detailled_server_stats[GPU_server_alias]
+            shared_gpu_stats_detailed[GPU_server_alias] = (
+                detailled_gpu_stats[GPU_server_alias]
+            )
+            shared_cpu_stats_detailed[GPU_server_alias] = (
+                detailled_cpu_stats[GPU_server_alias]
             )
             shared_server_disk_detailed[GPU_server_alias] = (
                 disk_stats_detailed[GPU_server_alias]
@@ -156,7 +177,8 @@ def main():
     cmd_manager = ManageCmdsToHosts(host_manager)
 
     shared_server_stats = {}
-    shared_server_stats_detailed = {}
+    shared_gpu_stats_detailed = {}
+    shared_cpu_stats_detailed = {}
     shared_server_disk_detailed = {}
     results_lock = threading.Lock()
 
@@ -176,8 +198,11 @@ def main():
             df_stats = pd.DataFrame.from_dict(
                 shared_server_stats, orient="index"
             )
-            df_stats_detailed = pd.DataFrame.from_dict(
-                shared_server_stats_detailed, orient="index"
+            df_stats_gpu_detailed = pd.DataFrame.from_dict(
+                shared_gpu_stats_detailed, orient="index"
+            )
+            df_stats_cpu_detailed = pd.DataFrame.from_dict(
+                shared_cpu_stats_detailed, orient="index"
             )
             df_disk_space_detailed = pd.DataFrame.from_dict(
                 shared_server_disk_detailed, orient="index"
@@ -185,7 +210,8 @@ def main():
 
             # Sort the DataFrames by index (server names) alphabetically
             df_stats_sorted = df_stats.sort_index()
-            df_stats_detailed_sorted = df_stats_detailed.sort_index()
+            df_stats_gpu_detailed_sorted = df_stats_gpu_detailed.sort_index()
+            df_stats_cpu_detailed_sorted = df_stats_cpu_detailed.sort_index()
             df_disk_space_detailed_sorted = df_disk_space_detailed.sort_index()
 
             # Use tabulate to create the tables
@@ -194,11 +220,18 @@ def main():
                 df_stats_sorted, headers="keys", tablefmt="grid"
             )
 
-            latest_result_detailed = (
+            latest_result_detailed_gpu = (
                 f"Time Stamp: {current_time}\n"  # Add timestamp
             )
-            latest_result_detailed += tabulate(
-                df_stats_detailed_sorted, headers="keys", tablefmt="grid"
+            latest_result_detailed_gpu += tabulate(
+                df_stats_gpu_detailed_sorted, headers="keys", tablefmt="grid"
+            )
+
+            latest_result_detailed_cpu = (
+                f"Time Stamp: {current_time}\n"  # Add timestamp
+            )
+            latest_result_detailed_cpu += tabulate(
+                df_stats_cpu_detailed_sorted, headers="keys", tablefmt="grid"
             )
 
             latest_result_detailed_space = (
@@ -210,7 +243,8 @@ def main():
 
             payload = {
                 "stats": latest_result,
-                "detailed_stats": latest_result_detailed,
+                "detailed_stats_gpu": latest_result_detailed_gpu,
+                "detailed_stats_cpu": latest_result_detailed_cpu,
                 "disk_stats": latest_result_detailed_space,
             }
 
@@ -244,7 +278,8 @@ def main():
                     results_lock,
                     barrier,
                     shared_server_stats,
-                    shared_server_stats_detailed,
+                    shared_gpu_stats_detailed,
+                    shared_cpu_stats_detailed,
                     shared_server_disk_detailed,
                 ),
             )

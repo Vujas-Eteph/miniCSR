@@ -38,6 +38,7 @@ class CPUWatcher:
         cpu_load_wrt_user_info,
         top_output,
         cpu_count,
+        cpu_util_info,
     ):
         cpu_memory = self.free_extractor.get_free_info(cpu_memory_info)
         cpu_load = self.uptime_extractor.get_uptime_info(cpu_load_info)
@@ -62,9 +63,25 @@ class CPUWatcher:
         # print("cpu load", cpu_load.get('load_5min')/cpu_count)
         # print(filtered_cpu_load_wrt_user)
 
+        # !WARNING Not clean!
+        cpu_util_info = cpu_util_info.split(' - ')
+        us_cpu = float(cpu_util_info[0].split(' ')[-1].replace(',', '.'))
+        sy_cpu = float(cpu_util_info[1].split(' ')[-1].replace(',', '.'))
+        cpu_util = us_cpu + sy_cpu
+        cpu_idle = float(cpu_util_info[2].split(' ')[-1].replace(',', '.'))
+        wa_cpu = float(cpu_util_info[3].split(' ')[-1].replace(',', '.'))
+
+        cpu_util_distribution = {"us_cpu": round(us_cpu, 2),
+                                 "sy_cpu": round(sy_cpu, 2),
+                                 "cpu_util": round(cpu_util, 2),
+                                 "idle_cpu": round(cpu_idle, 2),
+                                 "wait_cpu": round(wa_cpu, 2),
+                                 }
+
         return {
             "cpu_memory": cpu_memory,
             "cpu_load": cpu_load,
             "normalized_cpu_load_wrt_user": filtered_cpu_load_wrt_user,
             "cpu_count": cpu_count,
+            "cpu_util_distribution": cpu_util_distribution,
         }
