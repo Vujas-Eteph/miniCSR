@@ -16,11 +16,22 @@ restart_monitoring() {
     done
 }
 
-# Start the monitoring script in a loop
-restart_monitoring &
+# Function to restart Gunicorn periodically
+restart_miniCSR() {
+    while true; do
+        # Kill previous Gunicorn instance if exists
+        pkill -f "gunicorn -w 4 -b 0.0.0.0:1990" 
+        
+        # Start Gunicorn server
+        gunicorn -w 4 -b 0.0.0.0:1990 app:app & 
+        
+        sleep 3600  # Restart every hour (modify as needed)
+    done
+}
 
-# Start the Gunicorn server
-gunicorn -w 4 -b 0.0.0.0:1990 app:app &
+# Start both functions in parallel
+restart_monitoring &  # Run monitoring script in the background
+restart_miniCSR &     # Run Gunicorn restart loop in the background
 
 # Wait for all background processes to finish
 wait
