@@ -36,7 +36,8 @@ def display_output():
     # Render the data in 'main.html'
     return render_template('main.html',
                            result=loaded_data.get("stats", "No stats available"),
-                           result_detailed=loaded_data.get("detailed_stats", "No detailed stats available"),
+                           result_detailed_gpu=loaded_data.get("detailed_stats_gpu", "No detailed stats available"),
+                           result_detailed_cpu=loaded_data.get("detailed_stats_cpu", "No detailed stats available"),
                            result_detailed_space=loaded_data.get("disk_stats", "No disk stats available"))
 
 @app.route('/logout')

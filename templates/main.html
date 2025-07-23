@@ -14,10 +14,12 @@
 </head>
 <body>
     <h1> Check Server Availability: </h1>
-    <h3>- GPU/CPU Usage and Active Users</h3>
+    <h3>- Active Users and GPU/CPU Utilization </h3>
     <pre>{{ result }}</pre>
     <h3>- Detailed GPU Information</h3>
-    <pre>{{ result_detailed }}</pre>
+    <pre>{{ result_detailed_gpu }}</pre>
+    <h3>- Detailed CPU Information</h3>
+    <pre>{{ result_detailed_cpu }}</pre>
     <h3>- Disk Space Information</h3>
     <pre>{{ result_detailed_space }}</pre>
     <script>
