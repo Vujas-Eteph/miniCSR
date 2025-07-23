@@ -64,18 +64,13 @@ class CPUWatcher:
         # print(filtered_cpu_load_wrt_user)
 
         # !WARNING Not clean!
-        cpu_util_info = cpu_util_info.split(' - ')
-        us_cpu = float(cpu_util_info[0].split(' ')[-1].replace(',', '.'))
-        sy_cpu = float(cpu_util_info[1].split(' ')[-1].replace(',', '.'))
-        cpu_util = us_cpu + sy_cpu
-        cpu_idle = float(cpu_util_info[2].split(' ')[-1].replace(',', '.'))
-        wa_cpu = float(cpu_util_info[3].split(' ')[-1].replace(',', '.'))
-
-        cpu_util_distribution = {"us_cpu": round(us_cpu, 2),
-                                 "sy_cpu": round(sy_cpu, 2),
-                                 "cpu_util": round(cpu_util, 2),
-                                 "idle_cpu": round(cpu_idle, 2),
-                                 "wait_cpu": round(wa_cpu, 2),
+        extract_cpu_metric = lambda x : round(float(x.split(' ')[-1].replace(',', '.')), 2)
+        us_cpu, sy_cpu, cpu_idle, wa_cpu = map(extract_cpu_metric, cpu_util_info.split(' - '))
+        cpu_util_distribution = {"us_cpu": us_cpu,
+                                 "sy_cpu": sy_cpu,
+                                 "cpu_util": us_cpu + sy_cpu,  # used by user and system 
+                                 "idle_cpu": cpu_idle,
+                                 "wait_cpu": wa_cpu,
                                  }
 
         return {
